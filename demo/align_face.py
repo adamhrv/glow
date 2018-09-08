@@ -10,6 +10,8 @@ import imutils
 import dlib
 import cv2
 
+import settings as cfg
+
 # construct the argument parser and parse the arguments
 # ap = argparse.ArgumentParser()
 # ap.add_argument("--shape-predictor", help="path to facial landmark predictor", default='shape_predictor_68_face_landmarks.dat')
@@ -20,14 +22,14 @@ import cv2
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor and the face aligner
 detector = dlib.get_frontal_face_detector()
-predictor = dlib.shape_predictor('shape_predictor_68_face_landmarks.dat')
+predictor = dlib.shape_predictor(cfg.FP_DLIB_PREDICTOR)
 fa = FaceAligner(predictor, desiredFaceWidth=256,
                  desiredLeftEye=(0.371, 0.480))
 
 
 # Input: numpy array for image with RGB channels
 # Output: (numpy array, face_found)
-def align_face(img):
+def align_face(img, expand):
     img = img[:, :, ::-1]  # Convert from RGB to BGR format
     img = imutils.resize(img, width=800)
 
@@ -37,7 +39,10 @@ def align_face(img):
 
     if len(rects) > 0:
         # align the face using facial landmarks
-        align_img = fa.align(img, gray, rects[0])[:, :, ::-1]
+        x1, y1 = rects[0].tl_corner().x - expand, rects[0].tl_corner().y - expand
+        x2, y2 = rects[0].br_corner().x + expand, rects[0].br_corner().y + expand
+        expanded = dlib.rectangle(x1, y1, x2, y2)
+        align_img = fa.align(img, gray, expanded)[:, :, ::-1]
         align_img = np.array(Image.fromarray(align_img).convert('RGB'))
         return align_img, True
     else:
@@ -46,9 +51,9 @@ def align_face(img):
 
 # Input: img_path
 # Output: aligned_img if face_found, else None
-def align(img_path):
+def align(img_path, expand=0):
     img = Image.open(img_path)
     img = img.convert('RGB')  # if image is RGBA or Grayscale etc
     img = np.array(img)
-    x, face_found = align_face(img)
+    x, face_found = align_face(img, expand)
     return x
