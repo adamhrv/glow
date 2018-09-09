@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import tensorflow as tf
 import time
@@ -6,7 +8,10 @@ from PIL import Image
 from threading import Lock
 
 # override openai/glow variable paths
-import settings as cfg
+try:
+    import app.settings.app_cfg as cfg
+except:
+    import settings as cfg
 
 
 lock = Lock()

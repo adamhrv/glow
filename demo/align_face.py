@@ -1,5 +1,6 @@
 # OLD USAGE
 # python align_faces.py --shape-predictor shape_predictor_68_face_landmarks.dat --image images/example_01.jpg
+import os
 
 # import the necessary packages
 from imutils.face_utils import FaceAligner
@@ -10,7 +11,10 @@ import imutils
 import dlib
 import cv2
 
-import settings as cfg
+if os.path.isdir('app/settings'):
+    import app.settings.app_cfg as cfg
+else:
+    import settings as cfg
 
 # construct the argument parser and parse the arguments
 # ap = argparse.ArgumentParser()
