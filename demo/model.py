@@ -40,6 +40,9 @@ if optimized:
     import blocksparse
     #graph_path = 'graph_optimized.pb'
     graph_path = cfg.FP_GLOW_OPTIMIZED
+    if not os.path.exists(graph_path):
+        print('[!] Error. File not found: {}'.format(graph_path))
+    print('loading model from: {}'.format(graph_path))
     inputs = {
         'dec_eps_0': 'dec_eps_0',
         'dec_eps_1': 'dec_eps_1',
@@ -64,6 +67,9 @@ if optimized:
 else:
     #graph_path = 'graph_unoptimized.pb'
     graph_path = cfg.FP_GLOW_UNOPTIMIZED
+    if not os.path.exists(graph_path):
+        print('[!] Error. File not found: {}'.format(graph_path))
+    print('loading model from: {}'.format(graph_path))
     inputs = {
         'dec_eps_0': 'Placeholder',
         'dec_eps_1': 'Placeholder_1',
